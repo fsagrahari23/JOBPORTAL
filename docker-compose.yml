@@ -1,0 +1,78 @@
+version: '3.8'
+
+services:
+  kafka:
+    image: apache/kafka:4.1.0
+    ports:
+      - "9092:9092"
+    environment:
+      - KAFKA_NODE_ID=1
+      - KAFKA_PROCESS_ROLES=broker,controller
+      - KAFKA_LISTENER_SECURITY_PROTOCOL_MAP=PLAINTEXT:PLAINTEXT,CONTROLLER:PLAINTEXT
+      - KAFKA_LISTENERS=PLAINTEXT://:9092,CONTROLLER://:9093
+      - KAFKA_ADVERTISED_LISTENERS=PLAINTEXT://kafka:9092
+      - KAFKA_CONTROLLER_LISTENER_NAMES=CONTROLLER
+      - KAFKA_CONTROLLER_QUORUM_VOTERS=1@kafka:9093
+      - KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR=1
+      - KAFKA_GROUP_INITIAL_REBALANCE_DELAY_MS=0
+
+  frontend:
+    build: ./frontend
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=development
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+   
+  auth:
+    build: ./auth
+    ports:
+      - "5000:5000"
+    environment:
+      - NODE_ENV=production
+    env_file:
+      - ./auth/.env
+    depends_on:
+      - kafka
+
+  jobs:
+    build: ./jobs
+    ports:
+      - "5001:5001"
+    environment:
+      - NODE_ENV=production
+    env_file:
+      - ./jobs/.env
+    depends_on:
+      - kafka
+
+  user:
+    build: ./user
+    ports:
+      - "5002:5002"
+    environment:
+      - NODE_ENV=production
+    env_file:
+      - ./user/.env
+
+  payment:
+    build: ./payment
+    ports:
+      - "5004:5004"
+    environment:
+      - NODE_ENV=production
+    env_file:
+      - ./payment/.env
+
+  utils:
+    build: ./utils
+    ports:
+      - "5003:5003"
+    environment:
+      - NODE_ENV=production
+    env_file:
+      - ./utils/.env
+    depends_on:
+      - kafka

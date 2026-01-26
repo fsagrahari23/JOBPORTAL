@@ -8,7 +8,7 @@ export const connectKafka = async () => {
     try {
         const kafka = new Kafka({
             clientId: "auth-service",
-            brokers: [process.env.Kafka_broker || "localhost:9092"]
+            brokers: [process.env.KAFKA_BROKER || "kafka:9092"]
         })
         admin = kafka.admin()
         await admin.connect()
