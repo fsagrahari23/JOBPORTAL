@@ -16,6 +16,7 @@ app.use(cors())
 app.use(express.json())
 
 app.use("/api/payment", paymentRoutes)
+app.get('/api/payment/health', (req,res) => res.send('payment service is healthy...'))
 
 app.listen(process.env.PORT, () => {
     console.log(`Payment service is running on http://localhost:${process.env.PORT}`)

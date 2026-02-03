@@ -7,6 +7,7 @@ const app = express()
 app.use(express.json())
 connectKafka()
 app.use('/api/auth', authRouter)
+app.get('/api/auth/health', (req,res) => res.send('auth service is healthy...'))
 
 
 export default app
