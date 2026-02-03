@@ -70,7 +70,7 @@ async function initDb() {
     console.error("❌ Database initialization failed:", err);
   }
 }
-
+console.log('.........',process.env.PORT)
 initDb().then(() => {
   app.listen(process.env.PORT, () => {
     console.log(`Auth service is running on http://localhost:5000`)
